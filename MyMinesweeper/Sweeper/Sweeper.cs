@@ -24,25 +24,21 @@ public class Sweeper : ISweeper
         if (board.TheBoard == null)
             throw new NullReferenceException($"{nameof(Sweeper)}->IsSelectedSquareAMine(). Spelplanen är inte skapad");
 
-        Square? selectedSquare = null;
+        bool selectedPositionIsAMine = false;
+
         try
         {
-            selectedSquare = board.TheBoard[selectedRow, selectedColumn];
-            if (selectedSquare == null)
-                throw new NullReferenceException($"{nameof(Sweeper)}->IsSelectedSquareAMine(). Vald ruta på spelplanen saknas");
-        }
-        catch (NullReferenceException)
-        {
-            throw;
-        }
+            Square selectedSquare = board.TheBoard[selectedRow, selectedColumn];
+            if (selectedSquare != null)
+            {
+                if (selectedSquare.SquareCell == Cell.CELL_UNREVEALED_MINE || selectedSquare.SquareCell == Cell.CELL_BLOWN_MINE)
+                    selectedPositionIsAMine = true;
+            }
+        }       
         catch (IndexOutOfRangeException)
         {
             throw;
         }
-
-        bool selectedPositionIsAMine = false;
-        if (selectedSquare.SquareCell == Cell.CELL_UNREVEALED_MINE || selectedSquare.SquareCell == Cell.CELL_BLOWN_MINE)
-            selectedPositionIsAMine = true;
 
         return selectedPositionIsAMine;
     }
