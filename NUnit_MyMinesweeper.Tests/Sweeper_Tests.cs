@@ -175,11 +175,11 @@ namespace NUnit_MyMinesweeper.Tests
             int expectedStatus3 = 0;
 
             // Actual
-            // Status ska vara 2
+            // Status ska vara 2 dvs en cell med värde 1-8
             (Board actualBoard1, int actualStatus1) = sweeper.PerformMove(board, 0, 0);
             // Status ska vara 1 dvs. det är en mina
             (Board actualBoard2, int actualStatus2) = sweeper.PerformMove(board, 1, 1);
-            // Status ska vara 0
+            // Status ska vara 0 dvs en cell med värde 0
             (Board actualBoard3, int actualStatus3) = sweeper.PerformMove(board, 2, 2);
 
 
@@ -188,7 +188,6 @@ namespace NUnit_MyMinesweeper.Tests
             Assert.AreEqual(expectedStatus2, actualStatus2);
             Assert.AreEqual(expectedStatus3, actualStatus3);
         }
-
 
         #endregion
     }
