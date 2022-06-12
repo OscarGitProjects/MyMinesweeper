@@ -68,6 +68,9 @@ public class ConsoleMineSweeper
         bool isSelectedSquareOpen = false;
         bool invalidInput = false;
         bool loser = false;
+        // Status från ett anrop till PerformMove. Talar om vad det var för någon ruta på spelplanen som valdes
+        // Status = 1 om det var en mina.Status = 2 om det var en ruta med 1 - 8 minor som grannar. Annars är Status = 0
+        int status = 0; 
 
         do
         {
@@ -141,7 +144,7 @@ public class ConsoleMineSweeper
                                 }
 
                                 // Uppdatera spelplanen
-                                GameBoard = Sweeper.PerformMove(GameBoard, selectedColumn, selectedRow);
+                                (GameBoard, status) = Sweeper.PerformMove(GameBoard, selectedColumn, selectedRow);
                             }
                         }
                         catch (Exception) { }

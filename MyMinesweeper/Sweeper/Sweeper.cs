@@ -51,16 +51,20 @@ public class Sweeper : ISweeper
     /// <param name="board">Spelplanen</param>
     /// <param name="selectedColumn">Vald kolumn på spelplanen</param>
     /// <param name="selectedRow">Vald rad på spelplanen</param>
-    /// <returns>Uppdaterade spelplanen</returns>
+    /// <returns>Uppdaterade spelplanen och en status flagga. 
+    /// Status = 1 om det var en mina. Status = 2 om det var en ruta med 1-8 minor som grannar. Annars är Status = 0</returns>
     /// <exception cref="ArgumentNullException">Kastas om referensen till Board är null</exception>
     /// <exception cref="NullReferenceException">Kastas om spelplanen inte är skapad</exception>
-    public Board PerformMove(Board board, int selectedColumn, int selectedRow)
+    /// <exception cref="IndexOutOfRangeException">Kastas om vi försöker att hämta ruta utanför spelplanen</exception>
+    public (Board updatedBoard, int status) PerformMove(Board board, int selectedColumn, int selectedRow)
     {
         if (board == null)
             throw new ArgumentNullException($"{nameof(Sweeper)}->PerformMove(). Referensen till Board är null");
 
         if (board.TheBoard == null)
             throw new NullReferenceException($"{nameof(Sweeper)}->PerformMove(). Spelplanen är inte skapad");
+
+        int iStatus = 0;
 
         try
         {
@@ -70,6 +74,7 @@ public class Sweeper : ISweeper
                 Square square = board.GetSquare(selectedColumn, selectedRow);
                 square.IsOpenSquare = true;
                 square.SquareCell = Cell.CELL_BLOWN_MINE;
+                iStatus = 1;
             }
             else
             {// Rutan var inte en mina. Eventuellt öppna upp flera rutor
@@ -77,6 +82,8 @@ public class Sweeper : ISweeper
                 // Vald ruta ska ha värdet 0 om jag ska öppna upp flera rutor
                 if (board.HasSelectedSquareAValue(selectedColumn, selectedRow, Cell.CELL_0))
                 {
+                    iStatus = 0;
+
                     // TODO Kolla igenom detta
                     for (int row = selectedRow; row >= 0; row--)
                     {
@@ -102,15 +109,25 @@ public class Sweeper : ISweeper
                     if (square != null)
                     {
                         int squareCellvalue = (int)square.SquareCell;
-                        if(squareCellvalue >= 1 && squareCellvalue <= 8)
+                        if (squareCellvalue >= 1 && squareCellvalue <= 8)
+                        {
                             square.IsOpenSquare = true;
+                            iStatus = 2;
+                        }
                     }
                 }
             }
         }
-        catch (Exception){ }
+        catch(IndexOutOfRangeException)
+        {
+            throw;
+        }
+        catch (Exception)
+        {
+            throw;
+        }
 
-        return board;
+        return (updatedBoard: board, status: iStatus);
     }
 
 
