@@ -41,6 +41,11 @@ public class Board
     /// </summary>
     public int NumberOfRows { get; protected set; } = 0;
 
+    /// <summary>
+    /// Antal minor på spelplanen
+    /// </summary>
+    public int NumberOfMines { get; protected set; } = 0;
+
 
     /// <summary>
     /// Konstruktor
@@ -208,13 +213,13 @@ public class Board
     {        
         // Skapa minor
         Random rnd = new Random();
-        int numberOfMines = 0;
-        int maxNumberOfMines = ((NumberOfRows * NumberOfColumns) / 10);
+        int numberOfMines = 0;        
         int randRow = 0;
         int randCol = 0;
         Square square = null;
+        this.NumberOfMines = ((NumberOfRows * NumberOfColumns) / 10);
 
-        while (numberOfMines < maxNumberOfMines)
+        while (numberOfMines < this.NumberOfMines)
         {
             try
             {
@@ -340,4 +345,40 @@ public class Board
         return false;
     }
 
+
+    /// <summary>
+    /// Metoden kontrollerar om spelet är slut dvs. spelaren har lyckats öppna alla rutor utan att välja en ruta med en mina
+    /// </summary>
+    /// <returns>true om spelet är över och spelaren har vunnit. Annars returneras false</returns>
+    public bool IsGameOver()
+    {
+        bool gameOver = false;
+        int numberOfSquaresOpened = 0;
+        Square? square = null;
+
+        for (int rowIndex = 0; rowIndex < this.NumberOfRows; rowIndex++)
+        {
+            for (int colIndex = 0; colIndex < this.NumberOfColumns; colIndex++)
+            {
+                try
+                {
+                    square = TheBoard[rowIndex, colIndex];
+                    if(square != null)
+                    {
+                        if(square.IsOpenSquare && square.SquareCell != Cell.CELL_BLOWN_MINE && square.SquareCell != Cell.CELL_UNREVEALED_MINE)
+                            numberOfSquaresOpened++;
+                    }
+                }
+                catch (Exception) 
+                { }
+            }        
+        }
+
+        if(numberOfSquaresOpened == (NumberOfRows * NumberOfColumns) - NumberOfMines)
+        {// Spelaren har öppnat alla rutor som inte är minor. Spelet är slut
+            gameOver = true;
+        }
+
+        return gameOver;
+    }
 }
